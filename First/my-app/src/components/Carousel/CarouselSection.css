@@ -1,0 +1,63 @@
+.carousel-container {
+  overflow: hidden;
+  background-color: #f3f4f6; /* Light gray background */
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.carousel-row {
+  display: flex;
+  width: max-content;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.scroll-slow {
+  animation: scrollLeft 60s linear infinite;
+}
+.scroll-medium {
+  animation: scrollLeft 45s linear infinite;
+}
+.scroll-fast {
+  animation: scrollLeft 30s linear infinite;
+}
+.reverse {
+  animation-direction: reverse;
+}
+
+.hospital-card {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  margin-right: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+.hospital-card:hover {
+  transform: scale(1.05);
+}
+
+.hospital-card img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.hospital-card span {
+  font-weight: 600;
+  color: #333;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
