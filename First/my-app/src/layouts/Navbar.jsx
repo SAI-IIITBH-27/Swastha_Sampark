@@ -19,7 +19,8 @@ function HarmonyNav() {
     { text: "Find Route", onClick: () => navigate("/find-route") },
     { text: "Bio", onClick: () => navigate("/bio") },
     { text: "Pricing", onClick: () => navigate("/pricing") },
-    { text: "FAQ", onClick: () => navigate("/faq") },
+    { text: "Find Doctors", onClick: () => navigate("/find-doctor") },
+    {text: "Home",onClick:()=>navigate("/")},
   ];
 
   return (
@@ -46,9 +47,9 @@ function HarmonyNav() {
       {/* CTA Button */}
       <button
         className="mt-4 sm:mt-0 bg-neutral-900 text-white px-6 py-2 text-base hover:bg-neutral-800 transition-all"
-        onClick={() => alert("Download Now button clicked")}
+        onClick={() => navigate("/register")}
       >
-        Signup
+        Get Started
       </button>
     </header>
   );
