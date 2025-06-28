@@ -10,7 +10,7 @@ const doctors = [
     type: 'Full-time',
     fee: '250k - 350k',
     rating: '94%',
-    image: 'https://via.placeholder.com/100',
+    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZG9jdG9yfGVufDB8fDB8fHww',
   },
   {
     id: 2,
@@ -20,7 +20,37 @@ const doctors = [
     type: 'Part-time',
     fee: '300k - 400k',
     rating: '96%',
-    image: 'https://via.placeholder.com/100',
+    image: 'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZG9jdG9yfGVufDB8fDB8fHww',
+  },
+  {
+    id: 3,
+    name: 'Tatiana Bergson M.Psi',
+    specialty: 'Psychologist',
+    location: 'Jakarta Clinic, South Jakarta',
+    type: 'Part-time',
+    fee: '300k - 400k',
+    rating: '96%',
+    image: 'https://plus.unsplash.com/premium_photo-1661580574627-9211124e5c3f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8ZG9jdG9yfGVufDB8fDB8fHww',
+  },
+  {
+    id: 4,
+    name: 'Tatiana Bergson M.Psi',
+    specialty: 'Psychologist',
+    location: 'Jakarta Clinic, South Jakarta',
+    type: 'Part-time',
+    fee: '300k - 400k',
+    rating: '96%',
+    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGRvY3RvcnxlbnwwfHwwfHx8MA%3D%3D',
+  },
+  {
+    id: 5,
+    name: 'Tatiana Bergson M.Psi',
+    specialty: 'Psychologist',
+    location: 'Jakarta Clinic, South Jakarta',
+    type: 'Part-time',
+    fee: '300k - 400k',
+    rating: '96%',
+    image: 'https://plus.unsplash.com/premium_photo-1661764878654-3d0fc2eefcca?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGRvY3RvcnxlbnwwfHwwfHx8MA%3D%3D',
   },
 ];
 
@@ -33,15 +63,24 @@ const FindDoctor = () => {
       <HarmonyNav />
 
       <div className="bg-gray-50 min-h-screen">
-        {/* Hero */}
-        <div
-          className="bg-cover bg-center py-20 px-4 text-white"
-          style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1588776814546-ec7f207f4b1b)',
-          }}
-        >
-          <div className="max-w-4xl mx-auto text-center">
+        {/* Hero Section with Background Video */}
+        <div className="relative h-[80vh] text-white overflow-hidden flex items-center justify-center px-4">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          >
+            <source src="/findDocVid.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-60 z-10" />
+
+          {/* Hero Content */}
+          <div className="relative z-20 max-w-4xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-2">
               Make Appointments Easy and Fast
             </h1>
@@ -81,57 +120,19 @@ const FindDoctor = () => {
           <aside className="lg:w-1/4">
             <h3 className="text-lg font-semibold mb-4">Select City</h3>
             <ul className="space-y-2 text-gray-700">
-              <li>
-                <label>
-                  <input
-                    type="radio"
-                    name="location"
-                    checked={location === 'All Location'}
-                    onChange={() => setLocation('All Location')}
-                  />{' '}
-                  All Location
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input
-                    type="radio"
-                    name="location"
-                    onChange={() => setLocation('Nearby')}
-                  />{' '}
-                  Nearby
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input
-                    type="radio"
-                    name="location"
-                    onChange={() => setLocation('Jakarta')}
-                  />{' '}
-                  Jakarta
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input
-                    type="radio"
-                    name="location"
-                    onChange={() => setLocation('Bekasi')}
-                  />{' '}
-                  Bekasi
-                </label>
-              </li>
-              <li>
-                <label>
-                  <input
-                    type="radio"
-                    name="location"
-                    onChange={() => setLocation('Bandung')}
-                  />{' '}
-                  Bandung
-                </label>
-              </li>
+              {['All Location', 'Nearby', 'Jakarta', 'Bekasi', 'Bandung'].map((city) => (
+                <li key={city}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="location"
+                      checked={location === city}
+                      onChange={() => setLocation(city)}
+                    />{' '}
+                    {city}
+                  </label>
+                </li>
+              ))}
             </ul>
           </aside>
 
