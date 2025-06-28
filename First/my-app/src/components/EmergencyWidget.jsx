@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Phone, MapPin, Clock, Minus, Plus } from "lucide-react";
 
 const EmergencyWidget = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleWidget = () => {
     setIsOpen((prev) => !prev);

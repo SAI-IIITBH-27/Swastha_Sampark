@@ -101,7 +101,7 @@ const Register = () => {
               className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
               style={{
                 backgroundImage:
-                  "url('https://drive.google.com/uc?export=view&id=1KZ_Ub_2lZ0dHbKV0fAIhxVhiQA183RCz')",
+                  "url('https://images.pexels.com/photos/7653108/pexels-photo-7653108.jpeg')",
               }}
             ></div>
           </div>

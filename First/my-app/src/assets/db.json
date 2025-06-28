@@ -1,0 +1,704 @@
+{
+  "hospitals": [
+    {
+      "id": 1,
+      "name": "Apollo Hospital",
+      "location": "New Delhi",
+      "specialty": "Cardiology",
+      "status": "Available"
+    },
+    {
+      "id": 2,
+      "name": "AIIMS Delhi",
+      "location": "Delhi",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 3,
+      "name": "Fortis Escorts Heart Institute",
+      "location": "New Delhi",
+      "specialty": "Cardiac Surgery",
+      "status": "Available"
+    },
+    {
+      "id": 4,
+      "name": "Medanta - The Medicity",
+      "location": "Gurgaon",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 5,
+      "name": "Max Super Speciality Hospital",
+      "location": "New Delhi",
+      "specialty": "Oncology",
+      "status": "Limited"
+    },
+    {
+      "id": 6,
+      "name": "Artemis Hospital",
+      "location": "Gurgaon",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 7,
+      "name": "BLK Super Speciality Hospital",
+      "location": "New Delhi",
+      "specialty": "Transplant",
+      "status": "Available"
+    },
+    {
+      "id": 8,
+      "name": "Indraprastha Apollo Hospital",
+      "location": "New Delhi",
+      "specialty": "Orthopedics",
+      "status": "Busy"
+    },
+    {
+      "id": 9,
+      "name": "Nanavati Super Speciality Hospital",
+      "location": "Mumbai",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 10,
+      "name": "Kokilaben Dhirubhai Ambani Hospital",
+      "location": "Mumbai",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 11,
+      "name": "Lilavati Hospital",
+      "location": "Mumbai",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 12,
+      "name": "Bombay Hospital",
+      "location": "Mumbai",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 13,
+      "name": "Jaslok Hospital",
+      "location": "Mumbai",
+      "specialty": "Endocrinology",
+      "status": "Busy"
+    },
+    {
+      "id": 14,
+      "name": "Fortis Hospital",
+      "location": "Mumbai",
+      "specialty": "Trauma Care",
+      "status": "Available"
+    },
+    {
+      "id": 15,
+      "name": "Wockhardt Hospital",
+      "location": "Mumbai",
+      "specialty": "Cardiac Care",
+      "status": "Available"
+    },
+    {
+      "id": 16,
+      "name": "Apollo Hospitals",
+      "location": "Bangalore",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 17,
+      "name": "Manipal Hospital",
+      "location": "Bangalore",
+      "specialty": "Neurology",
+      "status": "Limited"
+    },
+    {
+      "id": 18,
+      "name": "Fortis Hospital",
+      "location": "Bangalore",
+      "specialty": "Orthopedics",
+      "status": "Available"
+    },
+    {
+      "id": 19,
+      "name": "Narayana Health City",
+      "location": "Bangalore",
+      "specialty": "Cardiac Surgery",
+      "status": "Busy"
+    },
+    {
+      "id": 20,
+      "name": "Columbia Asia Hospital",
+      "location": "Bangalore",
+      "specialty": "General Medicine",
+      "status": "Available"
+    },
+    {
+      "id": 21,
+      "name": "Apollo Hospitals",
+      "location": "Chennai",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 22,
+      "name": "Fortis Malar Hospital",
+      "location": "Chennai",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 23,
+      "name": "MIOT International",
+      "location": "Chennai",
+      "specialty": "Orthopedics",
+      "status": "Available"
+    },
+    {
+      "id": 24,
+      "name": "Global Hospitals",
+      "location": "Chennai",
+      "specialty": "Liver Transplant",
+      "status": "Available"
+    },
+    {
+      "id": 25,
+      "name": "Sri Ramachandra Medical Centre",
+      "location": "Chennai",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 26,
+      "name": "Apollo Hospitals",
+      "location": "Hyderabad",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 27,
+      "name": "Yashoda Hospitals",
+      "location": "Hyderabad",
+      "specialty": "Oncology",
+      "status": "Available"
+    },
+    {
+      "id": 28,
+      "name": "Continental Hospitals",
+      "location": "Hyderabad",
+      "specialty": "Neurology",
+      "status": "Limited"
+    },
+    {
+      "id": 29,
+      "name": "KIMS Hospitals",
+      "location": "Hyderabad",
+      "specialty": "Cardiac Care",
+      "status": "Available"
+    },
+    {
+      "id": 30,
+      "name": "Omega Hospitals",
+      "location": "Hyderabad",
+      "specialty": "Oncology",
+      "status": "Busy"
+    },
+    {
+      "id": 31,
+      "name": "Apollo Hospitals",
+      "location": "Kolkata",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 32,
+      "name": "AMRI Hospitals",
+      "location": "Kolkata",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 33,
+      "name": "Fortis Hospital",
+      "location": "Kolkata",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 34,
+      "name": "Ruby General Hospital",
+      "location": "Kolkata",
+      "specialty": "General Surgery",
+      "status": "Available"
+    },
+    {
+      "id": 35,
+      "name": "Peerless Hospital",
+      "location": "Kolkata",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 36,
+      "name": "Christian Medical College",
+      "location": "Vellore",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 37,
+      "name": "Apollo Hospitals",
+      "location": "Ahmedabad",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 38,
+      "name": "Sterling Hospital",
+      "location": "Ahmedabad",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 39,
+      "name": "CIMS Hospital",
+      "location": "Ahmedabad",
+      "specialty": "Oncology",
+      "status": "Available"
+    },
+    {
+      "id": 40,
+      "name": "Zydus Hospitals",
+      "location": "Ahmedabad",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 41,
+      "name": "Apollo Hospitals",
+      "location": "Pune",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 42,
+      "name": "Ruby Hall Clinic",
+      "location": "Pune",
+      "specialty": "Cardiac Care",
+      "status": "Available"
+    },
+    {
+      "id": 43,
+      "name": "Jehangir Hospital",
+      "location": "Pune",
+      "specialty": "General Medicine",
+      "status": "Limited"
+    },
+    {
+      "id": 44,
+      "name": "Sahyadri Hospitals",
+      "location": "Pune",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 45,
+      "name": "Deenanath Mangeshkar Hospital",
+      "location": "Pune",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 46,
+      "name": "Apollo Hospitals",
+      "location": "Jaipur",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 47,
+      "name": "Fortis Escorts Hospital",
+      "location": "Jaipur",
+      "specialty": "Cardiology",
+      "status": "Available"
+    },
+    {
+      "id": 48,
+      "name": "Manipal Hospital",
+      "location": "Jaipur",
+      "specialty": "Pediatrics",
+      "status": "Limited"
+    },
+    {
+      "id": 49,
+      "name": "EHCC Hospital",
+      "location": "Jaipur",
+      "specialty": "Emergency Care",
+      "status": "Available"
+    },
+    {
+      "id": 50,
+      "name": "Sawai Man Singh Hospital",
+      "location": "Jaipur",
+      "specialty": "Government Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 51,
+      "name": "Apollo Hospitals",
+      "location": "Lucknow",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 52,
+      "name": "Fortis Hospital",
+      "location": "Lucknow",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 53,
+      "name": "SGPGIMS",
+      "location": "Lucknow",
+      "specialty": "Government Super Specialty",
+      "status": "Limited"
+    },
+    {
+      "id": 54,
+      "name": "King George's Medical University",
+      "location": "Lucknow",
+      "specialty": "Teaching Hospital",
+      "status": "Available"
+    },
+    {
+      "id": 55,
+      "name": "Lohia Hospital",
+      "location": "Lucknow",
+      "specialty": "Government Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 56,
+      "name": "Apollo Hospitals",
+      "location": "Chandigarh",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 57,
+      "name": "PGIMER",
+      "location": "Chandigarh",
+      "specialty": "Government Super Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 58,
+      "name": "Fortis Hospital",
+      "location": "Mohali",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 59,
+      "name": "Max Super Speciality Hospital",
+      "location": "Mohali",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 60,
+      "name": "Government Medical College",
+      "location": "Chandigarh",
+      "specialty": "Teaching Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 61,
+      "name": "Apollo Hospitals",
+      "location": "Coimbatore",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 62,
+      "name": "PSG Hospitals",
+      "location": "Coimbatore",
+      "specialty": "Teaching Hospital",
+      "status": "Available"
+    },
+    {
+      "id": 63,
+      "name": "Kovai Medical Center",
+      "location": "Coimbatore",
+      "specialty": "Multi-Specialty",
+      "status": "Limited"
+    },
+    {
+      "id": 64,
+      "name": "GKNM Hospital",
+      "location": "Coimbatore",
+      "specialty": "General Medicine",
+      "status": "Available"
+    },
+    {
+      "id": 65,
+      "name": "Sri Ramakrishna Hospital",
+      "location": "Coimbatore",
+      "specialty": "Multi-Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 66,
+      "name": "Apollo Hospitals",
+      "location": "Kochi",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 67,
+      "name": "Aster Medcity",
+      "location": "Kochi",
+      "specialty": "Cardiology",
+      "status": "Available"
+    },
+    {
+      "id": 68,
+      "name": "Amrita Institute of Medical Sciences",
+      "location": "Kochi",
+      "specialty": "Multi-Specialty",
+      "status": "Limited"
+    },
+    {
+      "id": 69,
+      "name": "Lakeshore Hospital",
+      "location": "Kochi",
+      "specialty": "Neurology",
+      "status": "Available"
+    },
+    {
+      "id": 70,
+      "name": "Rajagiri Hospital",
+      "location": "Kochi",
+      "specialty": "General Medicine",
+      "status": "Busy"
+    },
+    {
+      "id": 71,
+      "name": "Apollo Hospitals",
+      "location": "Indore",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 72,
+      "name": "CHL Hospitals",
+      "location": "Indore",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 73,
+      "name": "Bombay Hospital",
+      "location": "Indore",
+      "specialty": "General Medicine",
+      "status": "Limited"
+    },
+    {
+      "id": 74,
+      "name": "Sri Aurobindo Institute of Medical Sciences",
+      "location": "Indore",
+      "specialty": "Teaching Hospital",
+      "status": "Available"
+    },
+    {
+      "id": 75,
+      "name": "MY Hospital",
+      "location": "Indore",
+      "specialty": "Government Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 76,
+      "name": "Apollo Hospitals",
+      "location": "Bhopal",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 77,
+      "name": "Bansal Hospital",
+      "location": "Bhopal",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 78,
+      "name": "Chirayu Medical College",
+      "location": "Bhopal",
+      "specialty": "Teaching Hospital",
+      "status": "Limited"
+    },
+    {
+      "id": 79,
+      "name": "Hamidia Hospital",
+      "location": "Bhopal",
+      "specialty": "Government Hospital",
+      "status": "Available"
+    },
+    {
+      "id": 80,
+      "name": "AIIMS Bhopal",
+      "location": "Bhopal",
+      "specialty": "Government Super Specialty",
+      "status": "Busy"
+    },
+    {
+      "id": 81,
+      "name": "Apollo Hospitals",
+      "location": "Nagpur",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 82,
+      "name": "Wockhardt Hospital",
+      "location": "Nagpur",
+      "specialty": "Cardiology",
+      "status": "Available"
+    },
+    {
+      "id": 83,
+      "name": "Kingsway Hospital",
+      "location": "Nagpur",
+      "specialty": "Multi-Specialty",
+      "status": "Limited"
+    },
+    {
+      "id": 84,
+      "name": "Orange City Hospital",
+      "location": "Nagpur",
+      "specialty": "General Medicine",
+      "status": "Available"
+    },
+    {
+      "id": 85,
+      "name": "Government Medical College",
+      "location": "Nagpur",
+      "specialty": "Teaching Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 86,
+      "name": "Apollo Hospitals",
+      "location": "Visakhapatnam",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 87,
+      "name": "Care Hospital",
+      "location": "Visakhapatnam",
+      "specialty": "Cardiology",
+      "status": "Available"
+    },
+    {
+      "id": 88,
+      "name": "KIMS ICON Hospital",
+      "location": "Visakhapatnam",
+      "specialty": "Multi-Specialty",
+      "status": "Limited"
+    },
+    {
+      "id": 89,
+      "name": "Queen's NRI Hospital",
+      "location": "Visakhapatnam",
+      "specialty": "General Medicine",
+      "status": "Available"
+    },
+    {
+      "id": 90,
+      "name": "Government General Hospital",
+      "location": "Visakhapatnam",
+      "specialty": "Government Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 91,
+      "name": "Apollo Hospitals",
+      "location": "Patna",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 92,
+      "name": "Ruban Memorial Hospital",
+      "location": "Patna",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 93,
+      "name": "Paras HMRI Hospital",
+      "location": "Patna",
+      "specialty": "Cardiology",
+      "status": "Limited"
+    },
+    {
+      "id": 94,
+      "name": "AIIMS Patna",
+      "location": "Patna",
+      "specialty": "Government Super Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 95,
+      "name": "NMCH Patna",
+      "location": "Patna",
+      "specialty": "Teaching Hospital",
+      "status": "Busy"
+    },
+    {
+      "id": 96,
+      "name": "Apollo Hospitals",
+      "location": "Guwahati",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 97,
+      "name": "GNRC Hospitals",
+      "location": "Guwahati",
+      "specialty": "Multi-Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 98,
+      "name": "Down Town Hospital",
+      "location": "Guwahati",
+      "specialty": "General Medicine",
+      "status": "Limited"
+    },
+    {
+      "id": 99,
+      "name": "AIIMS Guwahati",
+      "location": "Guwahati",
+      "specialty": "Government Super Specialty",
+      "status": "Available"
+    },
+    {
+      "id": 100,
+      "name": "Gauhati Medical College",
+      "location": "Guwahati",
+      "specialty": "Teaching Hospital",
+      "status": "Busy"
+    }
+  ]
+}

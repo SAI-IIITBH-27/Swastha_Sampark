@@ -6,6 +6,7 @@ import BioPage from "./pages/bioPage/bio";
 import PricingPage from "./pages/pricing/pricing";
 import Register from "./pages/register/register";
 import FindDoctor from "./pages/findDoctor/findDoctor";
+import EmergencyReferral from "./pages/ReferalDashboard/referalDashboard";
 function App() {
   return (
     <Router>
@@ -16,6 +17,7 @@ function App() {
         <Route path="/pricing" element={<PricingPage/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/find-doctor" element={<FindDoctor/>} />
+        <Route path="/emergencyreferal" element={<EmergencyReferral/>} />
       </Routes>
     </Router>
   );
