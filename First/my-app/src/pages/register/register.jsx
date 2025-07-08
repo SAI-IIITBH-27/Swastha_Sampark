@@ -1,25 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import HarmonyNav from "../../layouts/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [role, setRole] = useState("user");
+
+  const handleRedirect = () => {
+    if (role === "doctor") navigate("/doctor");
+    else if (role === "hospital") navigate("/emergencyreferal");
+    else navigate("/user");
+  };
+
   return (
     <>
       <HarmonyNav />
-      {/* source: https://codepen.io/owaiswiz/pen/jOPvEPB */}
       <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
         <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
           <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-            <div>
-              <img
-                src="https://drive.google.com/uc?export=view&id=1MFiKAExRFF0-2YNpAZzIu1Sh52J8r16v"
-                className="mx-auto"
-                alt="Register Banner"
-              />
+            {/* Role Buttons */}
+            <div className="flex justify-center gap-2 mb-4">
+              <button
+                onClick={() => setRole("doctor")}
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  role === "doctor"
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Doctor
+              </button>
+              <button
+                onClick={() => setRole("hospital")}
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  role === "hospital"
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Hospital Admin
+              </button>
+              <button
+                onClick={() => setRole("user")}
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  role === "user"
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                User
+              </button>
             </div>
-            <div className="mt-12 flex flex-col items-center">
-              <div className="w-full flex-1 mt-8">
+
+            <div className="mt-6 flex flex-col items-center">
+              <div className="w-full flex-1 mt-4">
                 <div className="flex flex-col items-center">
-                  <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-green-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
+                  <button
+                    onClick={handleRedirect}
+                    className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-green-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
+                  >
                     <div className="bg-white p-2 rounded-full">
                       <svg className="w-4" viewBox="0 0 533.5 544.3">
                         <path
@@ -61,7 +100,10 @@ const Register = () => {
                     type="password"
                     placeholder="Password"
                   />
-                  <button className="mt-5 tracking-wide font-semibold bg-green-400 text-white w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                  <button
+                    onClick={handleRedirect}
+                    className="mt-5 tracking-wide font-semibold bg-green-400 text-white w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                  >
                     <svg
                       className="w-6 h-6 -ml-2"
                       fill="none"

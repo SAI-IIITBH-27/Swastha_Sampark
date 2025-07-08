@@ -7,6 +7,8 @@ import PricingPage from "./pages/pricing/pricing";
 import Register from "./pages/register/register";
 import FindDoctor from "./pages/findDoctor/findDoctor";
 import EmergencyReferral from "./pages/ReferalDashboard/referalDashboard";
+import DoctorProfile from "./pages/doctorProfile/doctorProfile";
+import UserProfile from "./pages/UserProfile/UserProfile";
 function App() {
   return (
     <Router>
@@ -18,6 +20,8 @@ function App() {
         <Route path="/register" element={<Register/>} />
         <Route path="/find-doctor" element={<FindDoctor/>} />
         <Route path="/emergencyreferal" element={<EmergencyReferral/>} />
+        <Route path="/doctor" element={<DoctorProfile/>} />
+        <Route path="/user" element={<UserProfile/>} />
       </Routes>
     </Router>
   );

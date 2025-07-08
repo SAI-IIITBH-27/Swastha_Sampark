@@ -13,7 +13,7 @@ const EmergencyReferral = () => {
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const response = await fetch("http://localhost:3001/hospitals");
+        const response = await fetch("http://localhost:3001/hospitals"); //by db.json api in assets is working in this port
         if (!response.ok) {
           throw new Error("Failed to fetch hospitals");
         }

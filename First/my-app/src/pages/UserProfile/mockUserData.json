@@ -1,0 +1,16 @@
+{
+  "name": "Raj Kumar",
+  "reports": [
+    { "date": "2025-06-01", "bp": 120, "sugar": 90 },
+    { "date": "2025-06-15", "bp": 125, "sugar": 95 },
+    { "date": "2025-07-01", "bp": 130, "sugar": 100 }
+  ],
+  "visits": [
+    { "doctor": "Dr. Mehta", "hospital": "City Hospital", "date": "2025-06-01" },
+    { "doctor": "Dr. Patel", "hospital": "Metro Care", "date": "2025-06-18" }
+  ],
+  "medications": [
+    { "name": "Metformin", "dosage": "500mg" },
+    { "name": "Amlodipine", "dosage": "10mg" }
+  ]
+}

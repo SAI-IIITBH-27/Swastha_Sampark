@@ -7,20 +7,30 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "_dummy_Comment": "running doctors api stored in assets folder in refereal dashboard run : npm start:api",
+    "start:api": "json-server --watch src/assets/db.json --port 3001"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@headlessui/react": "^2.2.4",
+    "@mui/icons-material": "^7.1.2",
+    "@mui/material": "^7.1.2",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "aos": "^2.3.4",
     "axios": "^1.10.0",
+    "chart.js": "^4.5.0",
     "emailjs-com": "^3.2.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.518.0",
     "react": "^19.1.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
-    "react-router-dom": "^7.6.2"
+    "react-rating-stars-component": "^2.2.0",
+    "react-router-dom": "^7.6.2",
+    "recharts": "^3.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
