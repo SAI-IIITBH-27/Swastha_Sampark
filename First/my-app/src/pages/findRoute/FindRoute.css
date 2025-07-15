@@ -1,0 +1,99 @@
+.find-route-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  gap: 1.5rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.map-form-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Clean and unified map style */
+.map-wrapper {
+  flex: 1.5;
+  min-width: 300px;
+  max-width: 700px;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Unified form style */
+.form-wrapper {
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-wrapper input,
+.form-wrapper button {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.form-wrapper button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.form-wrapper button:hover {
+  background-color: #0056b3;
+}
+
+/* Alert */
+.alert {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  max-width: 500px;
+}
+
+/* Responsive fix for smaller devices */
+@media (max-width: 768px) {
+  .map-form-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-wrapper,
+  .form-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .map-wrapper {
+    height: 400px;
+  }
+}

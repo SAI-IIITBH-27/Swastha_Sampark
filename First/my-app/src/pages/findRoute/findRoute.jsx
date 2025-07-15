@@ -1,15 +1,17 @@
-import HarmonyNav from '../../layouts/Navbar';
-import MapComponent from '../../components/MapComponent';
+import HarmonyNav from "../../layouts/Navbar";
+import FormWithMap from "../../components/FormWithMap";
+import "./FindRoute.css";
 
 const FindRoute = () => {
   return (
     <>
       <HarmonyNav />
-      <h2>Route Finder Loaded</h2>
-      <MapComponent />
+      <div className="find-route-container">
+        <h2 className="page-title">Find the Best Route</h2>
+        <FormWithMap />
+      </div>
     </>
   );
 };
-
 
 export default FindRoute;
