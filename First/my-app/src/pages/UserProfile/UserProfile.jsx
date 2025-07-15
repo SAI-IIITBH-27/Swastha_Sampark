@@ -7,6 +7,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
+
 
 const data = [
   { name: "Jan", visits: 2 },
@@ -37,7 +39,7 @@ const doctorsList = [
 // Custom Star Rating Component
 const StarRating = ({ value, onChange }) => {
   const stars = [1, 2, 3, 4, 5];
-  
+
   return (
     <div className="flex">
       {stars.map((star) => (
@@ -45,7 +47,7 @@ const StarRating = ({ value, onChange }) => {
           key={star}
           className="text-2xl cursor-pointer"
           onClick={() => onChange(star)}
-          style={{ color: star <= value ? 'gold' : 'gray' }}
+          style={{ color: star <= value ? "gold" : "gray" }}
         >
           ★
         </span>
@@ -82,8 +84,31 @@ export default function UserProfile() {
     setReviewFeedback({ behavior: 0, experience: 0, waitTime: 0 });
   };
 
+  const navigate = useNavigate();// naviagte to registration page
+
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header with Logo and Logout */}
+      <div className="flex items-center justify-between mb-6 bg-white p-4 rounded shadow">
+        <div className="flex items-center space-x-3">
+          <img
+            src="/SwasthaSamparkLogo.png" // Make sure this path is correct or replace with your image URL
+            alt="Swasthya Sampark Logo"
+            className="h-10 w-10 object-contain"
+          />
+          <span className="text-2xl font-bold text-blue-700">
+            Swasthya Sampark
+          </span>
+        </div>
+        <button
+          onClick={() => navigate("/register")}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Logout
+        </button>
+      </div>
+
       <h1 className="text-3xl font-bold mb-6">User Profile Dashboard</h1>
 
       {/* User Info */}
@@ -137,7 +162,9 @@ export default function UserProfile() {
 
       {/* Search Doctors */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h2 className="text-xl font-semibold mb-4">Search Doctor in Hospital</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Search Doctor in Hospital
+        </h2>
         <input
           type="text"
           placeholder="Search by name..."
@@ -223,9 +250,9 @@ export default function UserProfile() {
           {/* Star Ratings */}
           <div className="mb-4">
             <label className="block font-medium mb-2">Doctor's Behavior:</label>
-            <StarRating 
+            <StarRating
               value={reviewFeedback.behavior}
-              onChange={(newRating) => 
+              onChange={(newRating) =>
                 setReviewFeedback({ ...reviewFeedback, behavior: newRating })
               }
             />
@@ -233,9 +260,9 @@ export default function UserProfile() {
 
           <div className="mb-4">
             <label className="block font-medium mb-2">Experience:</label>
-            <StarRating 
+            <StarRating
               value={reviewFeedback.experience}
-              onChange={(newRating) => 
+              onChange={(newRating) =>
                 setReviewFeedback({ ...reviewFeedback, experience: newRating })
               }
             />
@@ -243,9 +270,9 @@ export default function UserProfile() {
 
           <div className="mb-4">
             <label className="block font-medium mb-2">Wait Time:</label>
-            <StarRating 
+            <StarRating
               value={reviewFeedback.waitTime}
-              onChange={(newRating) => 
+              onChange={(newRating) =>
                 setReviewFeedback({ ...reviewFeedback, waitTime: newRating })
               }
             />

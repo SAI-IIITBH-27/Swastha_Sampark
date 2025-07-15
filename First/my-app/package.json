@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "_dummy_Comment": "running doctors api stored in assets folder in refereal dashboard run : npm start:api",
+    "_dummy_Comment": "running doctors api stored in assets folder in refereal dashboard run : npm run start:api",
     "start:api": "json-server --watch src/assets/db.json --port 3001"
   },
   "dependencies": {

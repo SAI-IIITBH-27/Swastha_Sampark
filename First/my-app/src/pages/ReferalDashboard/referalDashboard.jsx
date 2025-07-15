@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { MapPin, Search, Stethoscope, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const EmergencyReferral = () => {
   const [search, setSearch] = useState("");
@@ -9,11 +10,12 @@ const EmergencyReferral = () => {
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const response = await fetch("http://localhost:3001/hospitals"); //by db.json api in assets is working in this port
+        const response = await fetch("http://localhost:3001/hospitals");
         if (!response.ok) {
           throw new Error("Failed to fetch hospitals");
         }
@@ -70,12 +72,50 @@ const EmergencyReferral = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-white via-[#f3f4f6] to-[#e5e7eb] p-6 font-sans">
-      <h1 className="text-4xl font-bold text-center text-[#1f2937] mb-8">
+    <div className="min-h-screen bg-gradient-to-tr from-white via-[#f3f4f6] to-[#e5e7eb] font-sans">
+      {/* Top Menu Bar */}
+      <div className="flex justify-between items-center p-4 bg-[#e0f2ff] shadow-md">
+        <div className="flex items-center space-x-3">
+          <img
+            src="/SwasthaSamparkLogo.png"
+            alt="Swasthya Sampark Logo"
+            className="h-10 w-10 object-contain"
+          />
+          <span className="text-2xl font-bold text-blue-800">Swasthya Sampark</span>
+        </div>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => alert("Severity Detection coming soon!")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Severity Detection
+          </button>
+          <button
+            onClick={() => alert("Report Analysis coming soon!")}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+          >
+            Report Analysis
+          </button>
+          <button
+            onClick={() => alert("Consultancy Bot coming soon!")}
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+          >
+            Consultancy Bot
+          </button>
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <h1 className="text-4xl font-bold text-center text-[#1f2937] mt-8 mb-6">
         🚨 Emergency Referral Dashboard
       </h1>
 
-      <div className="max-w-3xl mx-auto mb-6">
+      <div className="max-w-3xl mx-auto mb-6 px-4">
         <div className="relative">
           <input
             type="text"
@@ -88,7 +128,7 @@ const EmergencyReferral = () => {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
         {filtered.length > 0 ? (
           filtered.map((hospital) => (
             <div
@@ -131,11 +171,8 @@ const EmergencyReferral = () => {
         )}
       </div>
 
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="relative z-50"
-      >
+      {/* Referral Dialog */}
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="bg-white max-w-md w-full rounded-xl p-6 shadow-lg relative">

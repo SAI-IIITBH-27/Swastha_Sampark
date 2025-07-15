@@ -7,6 +7,7 @@ import {
   Avatar,
   Divider,
   Chip,
+  Button,
 } from "@mui/material";
 import {
   MedicalInformation,
@@ -14,13 +15,7 @@ import {
   Schedule,
   Star,
 } from "@mui/icons-material";
-
-// Import Chart.js components
-import {
-  Bar,
-  Pie,
-  Radar,
-} from "react-chartjs-2";
+import { Bar, Pie, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,7 +29,9 @@ import {
   PointElement,
   LineElement,
 } from "chart.js";
+import { useNavigate } from "react-router-dom";
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -49,6 +46,8 @@ ChartJS.register(
 );
 
 const DoctorProfile = () => {
+  const navigate = useNavigate();
+
   const data = {
     totalPatients: 4820,
     activePatients: 312,
@@ -115,10 +114,38 @@ const DoctorProfile = () => {
   return (
     <Box sx={{ p: 3, maxWidth: 1200, margin: "auto" }}>
       {/* Header */}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+        p={2}
+        sx={{ backgroundColor: "#e6ffed", borderRadius: 2, boxShadow: 1 }}
+      >
+        <Box display="flex" alignItems="center">
+          <img
+            src="/SwasthaSamparkLogo.png" // Make sure logo exists at public path
+            alt="Swasthya Sampark Logo"
+            style={{ height: 40, width: 40, marginRight: 12 }}
+          />
+          <Typography variant="h5" fontWeight="bold" color="green">
+            Swasthya Sampark
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => navigate("/register")}
+        >
+          Logout
+        </Button>
+      </Box>
+
+      {/* Doctor Info */}
       <Grid container alignItems="center" spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} md={3}>
           <Avatar
-            src="/doctor-avatar.jpg"
+            src="/dremily.jpg"
             sx={{ width: 150, height: 150, mx: "auto" }}
           />
         </Grid>
@@ -135,15 +162,19 @@ const DoctorProfile = () => {
               {data.rating}/5 ({data.reviews} reviews)
             </Typography>
           </Box>
-          <Chip label={`${data.satisfaction}% Satisfaction`} color="success" sx={{ mt: 1 }} />
+          <Chip
+            label={`${data.satisfaction}% Satisfaction`}
+            color="success"
+            sx={{ mt: 1 }}
+          />
         </Grid>
       </Grid>
 
       <Divider sx={{ my: 3 }} />
 
-      {/* Stats Grid */}
+      {/* Main Dashboard Stats */}
       <Grid container spacing={3}>
-        {/* Patient Stats */}
+        {/* Bar Chart */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2, height: "100%" }}>
             <Typography variant="h6" gutterBottom>
@@ -154,7 +185,7 @@ const DoctorProfile = () => {
           </Paper>
         </Grid>
 
-        {/* Appointments */}
+        {/* Pie Chart */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2, height: "100%" }}>
             <Typography variant="h6" gutterBottom>
@@ -165,7 +196,7 @@ const DoctorProfile = () => {
           </Paper>
         </Grid>
 
-        {/* Success Rate (Gauge Placeholder) */}
+        {/* Success Rate */}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -177,7 +208,7 @@ const DoctorProfile = () => {
           </Paper>
         </Grid>
 
-        {/* Top Prescriptions */}
+        {/* Top Medications */}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -194,7 +225,7 @@ const DoctorProfile = () => {
           </Paper>
         </Grid>
 
-        {/* Cases Breakdown */}
+        {/* Radar Chart */}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
