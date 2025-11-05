@@ -70,7 +70,7 @@ const HomePage = () => {
               {/* Zip Input */}
               <input
                 type="text"
-                placeholder="ZIP code"
+                //placeholder="ZIP code"
                 className="bg-gray-200 text-gray-700 px-4 py-2 w-52 md:w-96 outline-none"
               />
 
