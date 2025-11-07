@@ -1,26 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { MapPin, Search, Stethoscope, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { get, post } from '../../services/apiClient';
 
 const EmergencyReferral = () => {
   const [search, setSearch] = useState("");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [hospitals, setHospitals] = useState([]);
+  const [referralNotes, setReferralNotes] = useState('');
+  const [referralStats, setReferralStats] = useState({});
+  const [patients, setPatients] = useState([]);
+  const [creatingNewPatient, setCreatingNewPatient] = useState(false);
+  const [newPatientName, setNewPatientName] = useState('');
+  const [newPatientEmail, setNewPatientEmail] = useState('');
+  const [creatingPatientLoading, setCreatingPatientLoading] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const loadedPatientsDoctorsRef = useRef(false);
+  const [selectedPatientId, setSelectedPatientId] = useState('');
+  const [selectedFromDoctorId, setSelectedFromDoctorId] = useState('');
+  const [selectedFromHospitalId, setSelectedFromHospitalId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // fetch hospitals + stats + patients/doctors (used on mount and for polling)
     const fetchHospitals = async () => {
       try {
-        const response = await fetch("http://localhost:3001/hospitals");
-        if (!response.ok) {
-          throw new Error("Failed to fetch hospitals");
+        const data = await get('/api/hospitals');
+        setHospitals(data.map((h) => ({ ...h, id: h._id || h.id, _id: h._id || h.id })));
+
+        // referral stats
+        try {
+          const sdata = await get('/api/referrals/stats');
+          const map = {};
+          sdata.forEach((it) => { map[it.hospital.id] = it.count; });
+          setReferralStats(map);
+        } catch { /* ignore stats fetch errors */ }
+
+        // only load patients/doctors once on first load to avoid excessive traffic
+        if (!loadedPatientsDoctorsRef.current) {
+          try {
+            const [pres, dres] = await Promise.all([
+              get('/api/patients'),
+              get('/api/doctors'),
+            ]);
+            if (pres) setPatients(pres);
+            if (dres) setDoctors(dres);
+          } catch { /* ignore patients/doctors fetch errors */ }
+          loadedPatientsDoctorsRef.current = true;
         }
-        const data = await response.json();
-        setHospitals(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -29,6 +60,13 @@ const EmergencyReferral = () => {
     };
 
     fetchHospitals();
+
+    // Poll hospitals and stats every 10 seconds so availability updates propagate to UI
+    const interval = setInterval(() => {
+      fetchHospitals();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const filtered = hospitals.filter(
@@ -40,7 +78,53 @@ const EmergencyReferral = () => {
 
   const openModal = (hospital) => {
     setSelectedHospital(hospital);
+    setReferralNotes('');
+    setSelectedPatientId('');
+    setSelectedFromDoctorId('');
+    setSelectedFromHospitalId('');
     setIsOpen(true);
+  };
+
+  const sendReferral = async () => {
+    if (!selectedHospital) return;
+    if (!selectedPatientId) { alert('Please select a patient'); return; }
+    try {
+      const body = {
+        patient: selectedPatientId,
+        fromDoctor: selectedFromDoctorId || null,
+        fromHospital: selectedFromHospitalId || null,
+        toDoctor: null,
+        toHospitalId: selectedHospital._id || selectedHospital.id,
+        reason: referralNotes || 'Referral from app',
+      };
+
+      await post('/api/referrals', body);
+      // optimistic update of stats
+      setReferralStats(prev => ({ ...prev, [selectedHospital._id]: (prev[selectedHospital._id] || 0) + 1 }));
+      setIsOpen(false);
+      alert('Referral sent successfully');
+    } catch (err) {
+      alert('Error sending referral: ' + err.message);
+    }
+  };
+
+  const createPatient = async () => {
+    if (!newPatientName) { alert('Please enter patient name'); return; }
+    setCreatingPatientLoading(true);
+    try {
+      const created = await post('/api/patients/register', { name: newPatientName, email: newPatientEmail });
+      // push into local patients list and select the new patient
+      setPatients(prev => [created, ...prev]);
+      setSelectedPatientId(created._id || created.id);
+      setCreatingNewPatient(false);
+      setNewPatientName('');
+      setNewPatientEmail('');
+      alert('Patient created and selected');
+    } catch (err) {
+      alert('Error creating patient: ' + err.message);
+    } finally {
+      setCreatingPatientLoading(false);
+    }
   };
 
   if (loading) {
@@ -144,15 +228,18 @@ const EmergencyReferral = () => {
               <p className="flex items-center text-gray-600 mt-1">
                 <Stethoscope className="w-4 h-4 mr-2" /> {hospital.specialty}
               </p>
-              <p
-                className={`mt-3 inline-block px-3 py-1 text-sm rounded-full ${
-                  hospital.status === "Available"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {hospital.status}
-              </p>
+              <div className="mt-3 flex items-center justify-between">
+                <p
+                  className={`inline-block px-3 py-1 text-sm rounded-full ${
+                    hospital.status === "Available"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {hospital.status}
+                </p>
+                <p className="text-sm text-gray-500">Referrals: {referralStats[hospital._id] || 0}</p>
+              </div>
               <button
                 className="mt-4 w-full bg-red-600 text-white font-medium py-2 px-4 rounded-xl hover:bg-red-700 transition"
                 onClick={() => openModal(hospital)}
@@ -194,14 +281,98 @@ const EmergencyReferral = () => {
                 <label className="block text-sm font-medium text-gray-700 mt-4">
                   Patient ID / Notes
                 </label>
+                <label className="block text-sm font-medium text-gray-700 mt-2">Select Patient</label>
+                <select
+                  value={selectedPatientId}
+                  onChange={(e) => setSelectedPatientId(e.target.value)}
+                  className="w-full mt-1 p-3 border rounded-lg text-gray-700"
+                >
+                  <option value="">-- Select existing patient --</option>
+                  {patients.map((p) => (
+                    <option key={p._id || p.id} value={p._id || p.id}>{p.name} {p.email ? `(${p.email})` : ''}</option>
+                  ))}
+                </select>
+
+                <div className="mt-2 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setCreatingNewPatient((s) => !s)}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {creatingNewPatient ? 'Cancel creating patient' : 'Create new patient'}
+                  </button>
+                  {creatingPatientLoading && <span className="text-sm text-gray-500">Creating...</span>}
+                </div>
+
+                {creatingNewPatient && (
+                  <div className="mt-3 bg-gray-50 p-3 rounded-lg">
+                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                    <input
+                      value={newPatientName}
+                      onChange={(e) => setNewPatientName(e.target.value)}
+                      className="w-full mt-1 p-2 border rounded-md"
+                      placeholder="Patient full name"
+                    />
+                    <label className="block text-sm font-medium text-gray-700 mt-2">Email (optional)</label>
+                    <input
+                      value={newPatientEmail}
+                      onChange={(e) => setNewPatientEmail(e.target.value)}
+                      className="w-full mt-1 p-2 border rounded-md"
+                      placeholder="patient@example.com"
+                    />
+                    <div className="mt-3 flex space-x-2">
+                      <button
+                        onClick={createPatient}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                        disabled={creatingPatientLoading}
+                      >
+                        Create Patient
+                      </button>
+                      <button
+                        onClick={() => setCreatingNewPatient(false)}
+                        className="bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <label className="block text-sm font-medium text-gray-700 mt-3">Referring Doctor (optional)</label>
+                <select
+                  value={selectedFromDoctorId}
+                  onChange={(e) => setSelectedFromDoctorId(e.target.value)}
+                  className="w-full mt-1 p-3 border rounded-lg text-gray-700"
+                >
+                  <option value="">-- Select doctor (optional) --</option>
+                  {doctors.map((d) => (
+                    <option key={d._id || d.id} value={d._id || d.id}>{d.name} {d.email ? `(${d.email})` : ''}</option>
+                  ))}
+                </select>
+
+                <label className="block text-sm font-medium text-gray-700 mt-3">Referring Hospital (optional)</label>
+                <select
+                  value={selectedFromHospitalId}
+                  onChange={(e) => setSelectedFromHospitalId(e.target.value)}
+                  className="w-full mt-1 p-3 border rounded-lg text-gray-700"
+                >
+                  <option value="">-- Select hospital (optional) --</option>
+                  {hospitals.map((h) => (
+                    <option key={h._id || h.id} value={h._id || h.id}>{h.name}</option>
+                  ))}
+                </select>
+
+                <label className="block text-sm font-medium text-gray-700 mt-4">Notes</label>
                 <textarea
+                  value={referralNotes}
+                  onChange={(e) => setReferralNotes(e.target.value)}
                   className="w-full mt-1 p-3 border rounded-lg text-gray-700 focus:ring-2 focus:ring-red-500"
                   rows={3}
-                  placeholder="Enter brief notes or patient ID..."
+                  placeholder="Enter brief notes..."
                 ></textarea>
                 <button
                   className="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 w-full"
-                  onClick={() => setIsOpen(false)}
+                  onClick={sendReferral}
                 >
                   Confirm Referral
                 </button>

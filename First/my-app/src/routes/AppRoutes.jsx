@@ -8,6 +8,9 @@ import FindDoctor from "../pages/findDoctor/findDoctor";
 import EmergencyReferral from "../pages/ReferalDashboard/referalDashboard";
 import DoctorProfile from "../pages/doctorProfile/doctorProfile";
 import UserProfile from "../pages/UserProfile/UserProfile";
+import PatientDashboard from "../pages/PatientDashboard/PatientDashboard";
+import DoctorDashboard from "../pages/DoctorDashboard/DoctorDashboard";
+import HospitalDashboard from "../pages/HospitalDashboard/HospitalDashboard";
 
 function AppRoutes() {
   return (
@@ -20,6 +23,9 @@ function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/find-doctor" element={<FindDoctor />} />
         <Route path="/emergencyreferal" element={<EmergencyReferral />} />
+  <Route path="/patient-dashboard" element={<PatientDashboard />} />
+  <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+  <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
         <Route path="/doctor" element={<DoctorProfile />} />
         <Route path="/user" element={<UserProfile />} />
       </Routes>

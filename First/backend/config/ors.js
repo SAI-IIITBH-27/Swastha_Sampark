@@ -5,7 +5,7 @@ dotenv.config();
 const ORS_API_KEY = process.env.ORS_API_KEY;
 
 if (!ORS_API_KEY) {
-  throw new Error("ORS_API_KEY not found in environment variables.");
+  console.warn("ORS_API_KEY not found in environment variables. ORS route features will be disabled or return errors.");
 }
 export const getORSRoute = async (start, end) => {
   const geocode = async (place) => {

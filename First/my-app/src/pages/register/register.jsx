@@ -1,15 +1,59 @@
 import React, { useState } from "react";
 import HarmonyNav from "../../layouts/Navbar";
 import { useNavigate } from "react-router-dom";
+import { post } from '../../services/apiClient';
 
 const Register = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("user");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleRedirect = () => {
     if (role === "doctor") navigate("/doctor");
     else if (role === "hospital") navigate("/emergencyreferal");
     else navigate("/user");
+  };
+
+  const handleSignIn = async () => {
+    try {
+  const endpoint = role === 'doctor' ? '/api/doctors/login' : role === 'hospital' ? '/api/hospitals/login' : '/api/patients/login';
+  const json = await post(endpoint, { email, password });
+      // store token and redirect to role dashboard
+      if (json.token) {
+        localStorage.setItem('token', json.token);
+        localStorage.setItem('role', role);
+      }
+      // also store returned user/hospital/doctor info if provided
+      if (json.hospital) localStorage.setItem('user', JSON.stringify(json.hospital));
+      if (json.doctor) localStorage.setItem('user', JSON.stringify(json.doctor));
+      if (json.patient) localStorage.setItem('user', JSON.stringify(json.patient));
+      if (role === 'doctor') navigate('/doctor-dashboard');
+      else if (role === 'hospital') navigate('/hospital-dashboard');
+      else navigate('/patient-dashboard');
+    } catch (err) {
+        if (err && err.status === 401) {
+          alert('Login failed: Invalid credentials. If you do not have an account, please sign up.');
+        } else {
+          alert('Login error: ' + (err.message || err));
+        }
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+  const endpoint = role === 'doctor' ? '/api/doctors/register' : role === 'hospital' ? '/api/hospitals/register' : '/api/patients/register';
+  const displayName = name || email.split('@')[0];
+  const body = { name: displayName, email, password };
+  await post(endpoint, body);
+      // auto-login after successful sign-up
+      setIsSignUp(false);
+      setTimeout(() => handleSignIn(), 200);
+    } catch (err) {
+      alert('Sign up error: ' + err.message);
+    }
   };
 
   return (
@@ -90,18 +134,31 @@ const Register = () => {
                 </div>
 
                 <div className="mx-auto max-w-xs">
+                  {isSignUp && (
+                    <input
+                      className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                      type="text"
+                      placeholder="Full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  )}
                   <input
-                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                     type="email"
                     placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <input
                     className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                     type="password"
                     placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
-                    onClick={handleRedirect}
+                    onClick={isSignUp ? handleSignUp : handleSignIn}
                     className="mt-5 tracking-wide font-semibold bg-green-400 text-white w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                   >
                     <svg
@@ -116,8 +173,11 @@ const Register = () => {
                       <circle cx="8.5" cy="7" r="4" />
                       <path d="M20 8v6M23 11h-6" />
                     </svg>
-                    <span className="ml-2">Sign In</span>
+                    <span className="ml-2">{isSignUp ? 'Create account' : 'Sign In'}</span>
                   </button>
+                  <div className="mt-3 text-center">
+                    <button className="text-sm text-blue-600 underline" onClick={() => setIsSignUp(s => !s)}>{isSignUp ? 'Have an account? Sign in' : 'Create an account'}</button>
+                  </div>
                   <p className="mt-6 text-xs text-gray-600 text-center">
                     I agree to abide by Cartesian Kinetics{" "}
                     <a
