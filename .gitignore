@@ -1,0 +1,32 @@
+# Backend ignores
+First/backend/node_modules/
+First/backend/.env
+First/backend/logs/
+First/backend/.cache/
+First/backend/temp/
+
+# Frontend ignores
+First/my-app/node_modules/
+First/my-app/.env
+First/my-app/.next/
+First/my-app/build/
+First/my-app/dist/
+First/my-app/.cache/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# npm/yarn logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sensitive generated credential dumps (do not commit)
+First/backend/scripts/created_credentials.json
+First/backend/scripts/created_hospital_creds.json
+First/backend/scripts/*.creds.json
