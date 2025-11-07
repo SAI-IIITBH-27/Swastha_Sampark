@@ -1,5 +1,5 @@
 // Centralized API client that attaches JWT token and handles JSON parsing/errors
-const API_BASE = (import.meta && import.meta.env && import.meta.env.VITE_API_BASE) || 'http://localhost:8000';
+const API_BASE = (import.meta && import.meta.env && import.meta.env.VITE_API_BASE) || 'https://swastha-sampark.onrender.com/';
 
 async function apiFetch(path, { method = 'GET', body = null, headers = {}, skipJson = false } = {}) {
   const token = localStorage.getItem('token');
