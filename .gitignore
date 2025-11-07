@@ -30,3 +30,7 @@ yarn-error.log*
 First/backend/scripts/created_credentials.json
 First/backend/scripts/created_hospital_creds.json
 First/backend/scripts/*.creds.json
+# Temp/local credential dumps and exports (ignore any generated JSON dumps)
+First/backend/scripts/test_credentials.json
+First/backend/scripts/seeded_credentials.json
+First/backend/scripts/exported_credentials.json
