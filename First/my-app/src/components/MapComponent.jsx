@@ -89,7 +89,7 @@ const MapComponent = ({ start, end }) => {
   useEffect(() => {
     const fetchRoute = async () => {
       try {
-        const res = await axios.post("http://localhost:8000/api/find-route", {
+        const res = await axios.post("https://swastha-sampark.onrender.com/api/find-route", {
           start,
           end,
         });
