@@ -65,19 +65,34 @@ async function dropIfExists(db, name) {
   const hospitals = [
     { name: 'Apollo Hospital', email: 'apollo@hospital.test', password: 'Apollo123!', role: 'hospital', availability: true },
     { name: 'CityCare Hospital', email: 'citycare@hospital.test', password: 'CityCare123!', role: 'hospital', availability: true },
-    { name: 'GreenValley Hospital', email: 'greenvalley@hospital.test', password: 'GreenValley123!', role: 'hospital', availability: false }
+    { name: 'GreenValley Hospital', email: 'greenvalley@hospital.test', password: 'GreenValley123!', role: 'hospital', availability: false },
+    { name: "St. Mary's Hospital", email: 'stmarys@hospital.test', password: 'StMarys123!', role: 'hospital', availability: true },
+    { name: 'Mercy General', email: 'mercy@hospital.test', password: 'MercyGen123!', role: 'hospital', availability: true },
+    { name: 'Sunrise Medical Center', email: 'sunrise@hospital.test', password: 'Sunrise123!', role: 'hospital', availability: false }
   ];
 
   const doctors = [
-    { name: 'Dr. Alice', email: 'alice@doctor.test', password: 'DrAlice1!', role: 'doctor' },
-    { name: 'Dr. Bob', email: 'bob@doctor.test', password: 'DrBob1!', role: 'doctor' },
-    { name: 'Dr. Carol', email: 'carol@doctor.test', password: 'DrCarol1!', role: 'doctor' }
+    { name: 'Dr. Amit Sharma', email: 'amit.sharma@doctor.test', password: 'AmitSharma1!', role: 'doctor' },
+    { name: 'Dr. Priya Singh', email: 'priya.singh@doctor.test', password: 'PriyaSingh1!', role: 'doctor' },
+    { name: 'Dr. John Smith', email: 'john.smith@doctor.test', password: 'JohnSmith1!', role: 'doctor' },
+    { name: 'Dr. Emily Clark', email: 'emily.clark@doctor.test', password: 'EmilyClark1!', role: 'doctor' },
+    { name: 'Dr. Michael Brown', email: 'michael.brown@doctor.test', password: 'MichaelBrown1!', role: 'doctor' },
+    { name: 'Dr. Fatima Khan', email: 'fatima.khan@doctor.test', password: 'FatimaKhan1!', role: 'doctor' },
+    { name: 'Dr. Chen Wei', email: 'chen.wei@doctor.test', password: 'ChenWei1!', role: 'doctor' },
+    { name: 'Dr. Laura García', email: 'laura.garcia@doctor.test', password: 'LauraGarcia1!', role: 'doctor' },
+    { name: 'Dr. David O. Johnson', email: 'david.johnson@doctor.test', password: 'DavidJohn1!', role: 'doctor' }
   ];
 
   const patients = [
-    { name: 'Patient One', email: 'p1@patient.test', password: 'Patient1!', role: 'patient' },
-    { name: 'Patient Two', email: 'p2@patient.test', password: 'Patient2!', role: 'patient' },
-    { name: 'Patient Three', email: 'p3@patient.test', password: 'Patient3!', role: 'patient' }
+    { name: 'Rohit Kumar', email: 'rohit.kumar@patient.test', password: 'RohitKumar1!', role: 'patient' },
+    { name: 'Ananya Sharma', email: 'ananya.sharma@patient.test', password: 'AnanyaSharma1!', role: 'patient' },
+    { name: 'Michael Johnson', email: 'michael.johnson@patient.test', password: 'MichaelJ1!', role: 'patient' },
+    { name: 'Sarah Lee', email: 'sarah.lee@patient.test', password: 'SarahLee1!', role: 'patient' },
+    { name: 'Ahmed Ali', email: 'ahmed.ali@patient.test', password: 'AhmedAli1!', role: 'patient' },
+    { name: 'Priya Patel', email: 'priya.patel@patient.test', password: 'PriyaPatel1!', role: 'patient' },
+    { name: 'Carlos Mendes', email: 'carlos.mendes@patient.test', password: 'CarlosM1!', role: 'patient' },
+    { name: 'Fatima Noor', email: 'fatima.noor@patient.test', password: 'FatimaNoor1!', role: 'patient' },
+    { name: 'Olivia Brown', email: 'olivia.brown@patient.test', password: 'OliviaB1!', role: 'patient' }
   ];
 
   // Hash passwords
@@ -158,7 +173,7 @@ async function dropIfExists(db, name) {
 
   fs.writeFileSync(OUT_FILE, JSON.stringify(creds, null, 2), 'utf8');
   console.log('Seed complete. Credentials summary written to', OUT_FILE);
-  console.log('Note: For safety this file does NOT contain plaintext passwords. If you need them, modify the script to include them (not recommended).');
+  console.log('WARNING: This credentials summary CONTAINS plaintext passwords for local testing. Do NOT commit or share this file.');
 
   await mongoose.disconnect();
   process.exit(0);
