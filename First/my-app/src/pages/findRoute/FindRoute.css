@@ -1,15 +1,18 @@
+
 .find-route-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .page-title {
   font-size: 2rem;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #243247;
   text-align: center;
 }
 
@@ -18,82 +21,339 @@
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;
   gap: 2rem;
   width: 100%;
+  max-width: 1250px;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
-/* Clean and unified map style */
 .map-wrapper {
   flex: 1.5;
   min-width: 300px;
-  max-width: 700px;
+  max-width: 790px;
   height: 500px;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #e8eef5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
 }
 
-/* Unified form style */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
 .form-wrapper {
   flex: 1;
   min-width: 280px;
-  max-width: 400px;
+  max-width: 450px;
+}
+
+.route-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
-.form-wrapper input,
-.form-wrapper button {
-  padding: 0.8rem 1rem;
+.form-wrapper input {
+  padding: 0.9rem 1rem;
   font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: 9px;
+  border: 1px solid #d1d5db;
   width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-wrapper input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-wrapper button {
-  background-color: #007bff;
-  color: white;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  border-radius: 9px;
   border: none;
+  width: 100%;
+  background: #2563eb;
+  color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background 0.2s ease;
 }
 
 .form-wrapper button:hover {
-  background-color: #0056b3;
+  background: #1d4ed8;
 }
 
-/* Alert */
-.alert {
-  background-color: #d1e7dd;
-  color: #0f5132;
-  padding: 1rem 1.5rem;
-  border-radius: 6px;
+.form-wrapper button:active {
+  transform: scale(0.99);
+}
+
+.route-helper {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-top: 1rem;
+}
+
+.map-status,
+.map-placeholder {
+  position: absolute;
+  z-index: 500;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
   text-align: center;
-  width: 100%;
-  margin-bottom: 1rem;
-  max-width: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
 }
 
-/* Responsive fix for smaller devices */
+.map-placeholder {
+  pointer-events: none;
+}
+
+.map-placeholder span {
+  font-size: 2rem;
+}
+
+.map-placeholder strong {
+  color: #243247;
+}
+
+.map-placeholder small,
+.map-status small {
+  color: #64748b;
+}
+
+.map-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: mapSpin 0.8s linear infinite;
+}
+
+@keyframes mapSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.map-error {
+  position: absolute;
+  z-index: 500;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  padding: 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 8px;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .map-form-wrapper {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
 
   .map-wrapper,
   .form-wrapper {
     width: 100%;
     max-width: 100%;
+    min-width: 0;
   }
 
   .map-wrapper {
     height: 400px;
+  }
+}
+
+
+/* Map container */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Route summary */
+.route-results {
+  margin-top: 14px;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.route-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.route-summary div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.route-summary strong {
+  font-size: 1.15rem;
+  color: #1e293b;
+}
+
+.route-summary small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Alternative routes */
+.route-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.route-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  color: #334155;
+}
+
+.route-option.active {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+
+.route-option span {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.route-updated {
+  display: block;
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+/* Loading */
+.map-status {
+  position: absolute;
+  z-index: 500;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  width: max-content;
+  max-width: 85%;
+}
+
+.map-status small {
+  color: #64748b;
+}
+
+.map-spinner {
+  height: 32px;
+  width: 32px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: mapSpin 0.8s linear infinite;
+}
+
+@keyframes mapSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.map-error {
+  position: absolute;
+  z-index: 500;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  padding: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+}
+
+.map-placeholder {
+  position: absolute;
+  z-index: 500;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.map-placeholder small {
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .route-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .route-option {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
