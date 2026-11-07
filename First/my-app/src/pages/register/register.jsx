@@ -24,7 +24,7 @@ const Register = () => {
       // store token and redirect to role dashboard
       if (json.token) {
         localStorage.setItem('token', json.token);
-        localStorage.setItem('role', role);
+        localStorage.setItem('role', role === 'user' ? 'patient' : role);
       }
       // also store returned user/hospital/doctor info if provided
       if (json.hospital) localStorage.setItem('user', JSON.stringify(json.hospital));

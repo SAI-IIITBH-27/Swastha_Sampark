@@ -44,6 +44,7 @@ async function apiFetch(path, { method = 'GET', body = null, headers = {}, skipJ
 const get = (path, opts = {}) => apiFetch(path, { method: 'GET', ...opts });
 const post = (path, body, opts = {}) => apiFetch(path, { method: 'POST', body, ...opts });
 const put = (path, body, opts = {}) => apiFetch(path, { method: 'PUT', body, ...opts });
+const patch = (path, body, opts = {}) => apiFetch(path, { method: 'PATCH', body, ...opts });
 const del = (path, opts = {}) => apiFetch(path, { method: 'DELETE', ...opts });
 
-export { apiFetch, get, post, put, del, API_BASE };
+export { apiFetch, get, post, put, patch, del, API_BASE };

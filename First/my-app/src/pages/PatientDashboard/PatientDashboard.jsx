@@ -1,51 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { get } from '../../services/apiClient';
+import { get, post } from '../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 
-const Badge = ({ children, color = 'gray' }) => {
-  const colorClasses = {
-    green: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
-    red: 'bg-rose-100 text-rose-700 border border-rose-200',
-    yellow: 'bg-amber-100 text-amber-700 border border-amber-200',
-    gray: 'bg-slate-100 text-slate-700 border border-slate-200'
-  };
-
-  return (
-    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide ${colorClasses[color]}`}>
-      {children}
-    </span>
-  );
+const statusStyles = {
+  pending: 'bg-amber-100 text-amber-700',
+  accepted: 'bg-emerald-100 text-emerald-700',
+  rejected: 'bg-rose-100 text-rose-700',
+  admitted: 'bg-emerald-100 text-emerald-700',
+  'under treatment': 'bg-blue-100 text-blue-700',
+  'under observation': 'bg-amber-100 text-amber-700',
+  discharged: 'bg-slate-100 text-slate-700',
+  referred: 'bg-purple-100 text-purple-700',
 };
 
-const StatCard = ({ title, value, description, color = "blue" }) => {
-  const colorClasses = {
-    blue: "bg-blue-50 text-blue-600 border-blue-200",
-    green: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    amber: "bg-amber-50 text-amber-600 border-amber-200",
-    purple: "bg-purple-50 text-purple-600 border-purple-200"
-  };
-
-  const iconClasses = {
-    blue: "text-blue-600",
-    green: "text-emerald-600",
-    amber: "text-amber-600",
-    purple: "text-purple-600"
-  };
-
-  return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-5 border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
-      <div className={`p-4 rounded-xl border-2 ${colorClasses[color]} group-hover:scale-110 transition-transform duration-300`}>
-        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-6a2 2 0 012-2h6"/>
-        </svg>
-      </div>
-      <div>
-        <div className="text-sm font-medium text-gray-500 mb-1 tracking-wide">{title}</div>
-        <div className="text-3xl font-bold text-gray-800 font-sans">{value}</div>
-        <div className="text-xs text-gray-400 mt-1">{description}</div>
-      </div>
-    </div>
-  );
+const StatusBadge = ({ status }) => {
+  const value = status || 'Unknown';
+  return <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[value.toLowerCase()] || 'bg-slate-100 text-slate-700'}`}>{value}</span>;
 };
 
 const PatientDashboard = () => {
@@ -53,198 +23,159 @@ const PatientDashboard = () => {
   const stored = useMemo(() => {
     try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; }
   }, []);
-
-  const patientId = stored && (stored._id || stored.id);
-  const [patient, setPatient] = useState(stored || null);
+  const patientId = stored?._id || stored?.id;
+  const [patient, setPatient] = useState(null);
   const [referrals, setReferrals] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [mustChangePassword, setMustChangePassword] = useState(Boolean(stored?.mustChangePassword));
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
-  const handleLogout = () => {
+  useEffect(() => {
+    if (localStorage.getItem('role') !== 'patient' || !patientId) {
+      navigate('/register');
+      return;
+    }
+    setLoading(true);
+    Promise.all([
+      get(`/api/patients/${patientId}`),
+      get(`/api/referrals/patient/${patientId}`),
+    ]).then(([profile, patientReferrals]) => {
+      setPatient(profile);
+      setReferrals(patientReferrals || []);
+      }).catch((error) => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        alert(`Unable to load your patient records: ${error.message}`);
+        navigate('/register');
+      })
+      .finally(() => setLoading(false));
+  }, [navigate, patientId]);
+
+  const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     navigate('/register');
   };
 
-  useEffect(() => {
-    if (!patientId) return;
-    get(`/api/patients/${patientId}`).then(p => setPatient(p)).catch(() => {});
-  }, [patientId]);
+  const changePassword = async (event) => {
+    event.preventDefault();
+    try {
+      await post('/api/patients/change-password', { currentPassword, newPassword });
+      const updated = { ...patient, mustChangePassword: false };
+      setPatient(updated);
+      setMustChangePassword(false);
+      localStorage.setItem('user', JSON.stringify(updated));
+    } catch (error) {
+      alert(`Password change failed: ${error.message}`);
+    }
+  };
 
-  useEffect(() => {
-    if (!patientId) return;
-    setLoading(true);
-    get(`/api/referrals/patient/${patientId}`).then(data => setReferrals(data || [])).catch(() => setReferrals([])).finally(() => setLoading(false));
-  }, [patientId]);
-
-  const stats = useMemo(() => {
-    const total = referrals.length;
-    const resolved = referrals.filter(r => r.status === 'accepted' || r.status === 'rejected').length;
-    const active = referrals.filter(r => r.status === 'pending').length;
-    return { total, resolved, active };
+  const referralCount = referrals.length;
+  const activeReferralCount = referrals.filter((referral) => !['rejected', 'discharged', 'completed', 'cancelled'].includes(referral.status)).length;
+  const hospitalHistory = useMemo(() => {
+    const hospitals = new Map();
+    referrals.forEach((referral) => {
+      [referral.fromHospital, referral.toHospital].forEach((hospital) => {
+        if (hospital?._id && !hospitals.has(String(hospital._id))) hospitals.set(String(hospital._id), hospital);
+      });
+    });
+    return Array.from(hospitals.values());
   }, [referrals]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-4 sm:p-6 font-sans">
       <div className="max-w-6xl mx-auto">
-        {/* Header with Website Name and Navigation */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-          <div className="flex items-center gap-4 mb-4 lg:mb-0">
-            <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 w-10 h-10 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-indigo-600 font-sans tracking-tight">Swastha Sampark</h1>
-                <p className="text-sm text-slate-500 font-medium">Healthcare Connection Platform</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-500 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl shadow-xs border border-slate-200/60 font-medium">
-              Last updated: {new Date().toLocaleDateString('en-GB')}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {/* Dashboard Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+        <header className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-4xl font-bold text-slate-800 mb-2 font-sans tracking-tight">Patient Dashboard</h2>
-            <p className="text-slate-600 text-lg font-light">Welcome back, {patient?.name?.split(' ')[0] || 'Patient'}</p>
+            <h1 className="text-2xl font-bold text-indigo-600">Swastha Sampark</h1>
+            <p className="text-sm text-slate-500">Your healthcare portal</p>
           </div>
+          <button onClick={logout} className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium">Logout</button>
+        </header>
+
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 className="text-4xl font-bold text-slate-800">My Health</h2>
+            <p className="text-slate-600 mt-1">Welcome, {patient?.name || 'Patient'}</p>
+          </div>
+          {patient?.status && <StatusBadge status={patient.status} />}
         </div>
 
-        {/* Patient Profile Card */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-slate-200/60">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
-            <div className="relative">
-              <img 
-                src={patient?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(patient?.name||'Patient')}&size=128&background=4f46e5&color=ffffff&bold=true&font-size=0.8`} 
-                alt="avatar" 
-                className="w-28 h-28 rounded-2xl border-4 border-white shadow-lg" 
-              />
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full border-3 border-white shadow-sm"></div>
+        <section className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 mb-6">
+          <div className="flex flex-col md:flex-row md:items-start gap-5">
+            <div className="w-20 h-20 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold">
+              {(patient?.name || 'P').slice(0, 1).toUpperCase()}
             </div>
-            <div className="flex-1 text-center lg:text-left">
-              <div className="font-bold text-2xl text-slate-800 mb-2 font-sans">{patient?.name || 'Patient'}</div>
-              <div className="text-slate-500 text-sm mb-4 font-medium flex items-center justify-center lg:justify-start gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                {patient?.email}
-              </div>
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <div className="text-sm text-slate-600 bg-slate-50 px-4 py-2 rounded-lg border border-slate-200 font-medium">
-                  <span className="text-slate-400">Age:</span> {patient?.age || '—'}
-                </div>
-                <div className="text-sm text-slate-600 bg-slate-50 px-4 py-2 rounded-lg border border-slate-200 font-medium">
-                  <span className="text-slate-400">Gender:</span> {patient?.gender || '—'}
-                </div>
-                {patient?.bloodGroup && (
-                  <div className="text-sm text-slate-600 bg-slate-50 px-4 py-2 rounded-lg border border-slate-200 font-medium">
-                    <span className="text-slate-400">Blood Group:</span> {patient?.bloodGroup}
-                  </div>
-                )}
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-slate-800">{patient?.name || 'Patient'}</h3>
+              <p className="text-sm text-slate-500 mt-1">{patient?.email || patient?.phone || 'No contact information'}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 text-sm">
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Patient ID:</span> {patient?._id || '—'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Age / Gender:</span> {patient?.age || '—'} / {patient?.gender || '—'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Blood group:</span> {patient?.bloodGroup || '—'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Hospital:</span> {patient?.hospital?.name || 'Not assigned'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Referred to:</span> {patient?.referredTo?.name || '—'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Doctor:</span> {patient?.assignedDoctor?.name || 'Not assigned'}</div>
+                <div className="bg-slate-50 border rounded-lg p-3"><span className="text-slate-400">Status:</span> {patient?.status || '—'}</div>
               </div>
             </div>
           </div>
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border p-5"><p className="text-sm text-slate-500">Current status</p><p className="text-2xl font-bold text-slate-800 mt-2">{patient?.status || 'Not recorded'}</p></div>
+          <div className="bg-white rounded-2xl border p-5"><p className="text-sm text-slate-500">Total referrals</p><p className="text-2xl font-bold text-slate-800 mt-2">{referralCount}</p></div>
+          <div className="bg-white rounded-2xl border p-5"><p className="text-sm text-slate-500">Active referrals</p><p className="text-2xl font-bold text-slate-800 mt-2">{activeReferralCount}</p></div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <StatCard 
-            title="TOTAL REFERRALS" 
-            value={stats.total} 
-            description="All time referrals"
-            color="blue"
-          />
-          <StatCard 
-            title="ACTIVE" 
-            value={stats.active} 
-            description="Pending review"
-            color="amber"
-          />
-          <StatCard 
-            title="RESOLVED" 
-            value={stats.resolved} 
-            description="Completed cases"
-            color="green"
-          />
-        </div>
-
-        {/* Referrals Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-200/60">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-2xl font-bold text-slate-800 font-sans tracking-tight">Your Referrals</h3>
-              <p className="text-slate-500 text-sm mt-2 font-medium tracking-wide">Track your medical referral history</p>
-            </div>
-            <div className="text-sm font-semibold text-slate-700 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200 tracking-wide">
-              {loading ? 'Loading...' : `${stats.total} total referrals`}
-            </div>
-          </div>
-
-          {referrals.length === 0 && !loading && (
-            <div className="text-center py-16">
-              <div className="text-slate-300 text-7xl mb-6">🏥</div>
-              <div className="text-slate-400 text-lg font-medium mb-2">No referrals found</div>
-              <div className="text-slate-300 text-sm">Your referral history will appear here</div>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {referrals.map(r => (
-              <div key={r._id} className="border border-slate-200 p-5 rounded-xl hover:shadow-md transition-all duration-300 hover:border-indigo-200/60 bg-white/50">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3">
-                      <div>
-                        <div className="font-bold text-slate-800 text-lg font-sans">
-                          Referred to: <span className="text-indigo-600">{r.toHospital?.name || (r.toHospital || '—')}</span>
-                        </div>
-                        <div className="text-sm text-slate-500 mt-1 font-medium">
-                          By: <span className="text-slate-700">{r.fromDoctor?.name || (r.fromDoctor || '—')}</span> 
-                          <span className="text-slate-400 mx-2">•</span>
-                          {r.fromHospital?.name || (r.fromHospital || '—')}
-                        </div>
-                      </div>
-                      <div className="text-sm text-slate-400 mt-2 lg:mt-0 font-medium">
-                        {new Date(r.date || r.createdAt).toLocaleString('en-GB')}
-                      </div>
-                    </div>
-                    <div className="text-slate-600 bg-slate-50/80 p-4 rounded-lg text-sm my-3 border border-slate-200/60 font-medium">
-                      {r.reason || "Referral for specialized medical consultation"}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <Badge color={r.status==='accepted'?'green':r.status==='rejected'?'red':'yellow'}>
-                        {r.status?.charAt(0).toUpperCase() + r.status?.slice(1)}
-                      </Badge>
-                      {r.notes && (
-                        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                          {r.notes}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <section className="bg-white rounded-2xl border p-5">
+            <h3 className="text-xl font-bold text-slate-800">My Referrals</h3>
+            <p className="text-sm text-slate-500 mt-1">Track where your referral is and what happens next.</p>
+            {loading && <p className="text-slate-400 py-8">Loading referrals...</p>}
+            {!loading && referrals.length === 0 && <p className="text-slate-400 py-8">No referrals have been recorded.</p>}
+            <div className="space-y-4 mt-4">
+              {referrals.map((referral) => <article key={referral._id} className="border rounded-xl p-4">
+                <div className="flex justify-between gap-3">
+                  <div><p className="font-semibold text-slate-800">{referral.fromHospital?.name || 'Referring hospital'} → {referral.toHospital?.name || 'Receiving hospital'}</p><p className="text-xs text-slate-500 mt-1">{new Date(referral.date || referral.createdAt).toLocaleString('en-GB')}</p></div>
+                  <StatusBadge status={referral.status} />
                 </div>
-              </div>
-            ))}
-          </div>
+                <p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3 mt-3">{referral.reason || 'No reason recorded'}</p>
+                <div className="flex flex-wrap gap-2 text-xs mt-3 text-slate-500"><span className="text-indigo-600 font-semibold">Initiated</span><span>→</span><span className={referral.status === 'accepted' ? 'text-indigo-600 font-semibold' : ''}>Hospital review</span><span>→</span><span className={['accepted', 'admitted', 'under_treatment'].includes(referral.status) ? 'text-indigo-600 font-semibold' : ''}>Treatment</span><span>→</span><span className={referral.status === 'discharged' ? 'text-indigo-600 font-semibold' : ''}>Discharged</span></div>
+              </article>)}
+            </div>
+          </section>
+
+          <div className="space-y-6">
+            <section className="bg-white rounded-2xl border p-5">
+              <h3 className="text-xl font-bold text-slate-800">Medical History</h3>
+              {patient?.medicalHistory?.length ? <ul className="list-disc list-inside text-slate-600 text-sm mt-3 space-y-2">{patient.medicalHistory.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul> : <p className="text-slate-400 text-sm mt-3">No medical history recorded.</p>}
+            </section>
+            <section className="bg-white rounded-2xl border p-5">
+              <h3 className="text-xl font-bold text-slate-800">Hospital Care History</h3>
+              <p className="text-sm text-slate-500 mt-1">Hospitals involved in your referral journey.</p>
+              {hospitalHistory.length ? <div className="mt-3 space-y-2">{hospitalHistory.map((hospital) => <div key={hospital._id} className="flex items-center justify-between bg-slate-50 border rounded-lg p-3 text-sm"><span className="font-medium text-slate-700">{hospital.name}</span><span className="text-slate-400">{hospital._id === patient?.hospital?._id ? 'Current hospital' : 'Referral hospital'}</span></div>)}</div> : <p className="text-slate-400 text-sm mt-3">No previous referral hospitals recorded.</p>}
+            </section>
+            <section className="bg-white rounded-2xl border p-5">
+              <h3 className="text-xl font-bold text-slate-800">Reports</h3>
+              <p className="text-sm text-slate-500 mt-2">Uploaded lab reports and scans will appear here when available.</p>
+              <p className="text-sm text-slate-400 mt-3">No reports available.</p>
+            </section>
+            <section className="bg-white rounded-2xl border p-5">
+              <h3 className="text-xl font-bold text-slate-800">What to do</h3>
+              <ul className="text-sm text-slate-600 mt-3 space-y-2 list-disc list-inside"><li>Follow instructions from your treating doctor.</li><li>Keep referral and hospital details available.</li><li>Attend scheduled follow-up visits.</li><li>Ask hospital staff before changing medication.</li></ul>
+            </section>
+            <section className="bg-white rounded-2xl border p-5">
+              <h3 className="text-xl font-bold text-slate-800">Basic first aid</h3>
+              <p className="text-sm text-slate-600 mt-2">For severe bleeding, breathing difficulty, chest pain, stroke symptoms, or unconsciousness, call emergency services immediately. Do not delay urgent medical care.</p>
+            </section>
+          </div></div>
         </div>
+      {mustChangePassword && <div className="fixed inset-0 z-30 bg-slate-900/40 flex items-center justify-center p-4"><form onSubmit={changePassword} className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl"><h3 className="text-xl font-bold text-slate-800">Change your temporary password</h3><p className="text-sm text-slate-600 mt-2">Choose a permanent password before continuing.</p><input className="w-full border rounded-xl p-3 mt-4" type="password" required placeholder="Temporary password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} /><input className="w-full border rounded-xl p-3 mt-3" type="password" minLength="8" required placeholder="New password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} /><button className="w-full bg-indigo-600 text-white rounded-xl py-3 mt-4 font-semibold" type="submit">Save new password</button></form></div>}
       </div>
-    </div>
   );
 };
 

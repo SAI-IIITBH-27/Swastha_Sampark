@@ -1,13 +1,29 @@
 import Referral from '../models/referral.model.js';
 import Hospital from '../models/hospital.model.js';
+import Patient from '../models/patient.model.js';
 
 // create a new referral
 export const createReferral = async (req, res) => {
   try {
     const { patient, fromDoctor, fromHospital, toDoctor, toHospitalId, reason } = req.body;
+    if (!patient || !toHospitalId) return res.status(400).json({ message: 'Patient and destination hospital are required' });
+    const sourceHospital = req.hospitalId || fromHospital;
+    if (req.hospitalId && fromHospital && String(req.hospitalId) !== String(fromHospital)) {
+      return res.status(403).json({ message: 'Referral source hospital does not match authenticated hospital' });
+    }
+    const patientRecord = await Patient.findById(patient);
+    if (!patientRecord) return res.status(404).json({ message: 'Patient not found' });
+    if (req.hospitalId && (!patientRecord.hospital || String(patientRecord.hospital) !== String(req.hospitalId))) {
+      return res.status(403).json({ message: 'Patient does not belong to this hospital' });
+    }
     // allow storing originating hospital as well (optional)
-    const refer = new Referral({ patient, fromDoctor, fromHospital, toDoctor, toHospital: toHospitalId, reason });
+    const refer = new Referral({ patient, fromDoctor, fromHospital: sourceHospital, toDoctor, toHospital: toHospitalId, reason });
     await refer.save();
+    await Patient.findByIdAndUpdate(patient, {
+      status: 'Referred',
+      referredTo: toHospitalId,
+      referredAt: new Date(),
+    });
     res.json({ message: 'Referral created', referral: refer });
   } catch (err) {
     console.error(err);
@@ -24,6 +40,9 @@ export const hospitalAction = async (req, res) => {
 
     const referral = await Referral.findById(id);
     if (!referral) return res.status(404).json({ message: 'Referral not found' });
+    if (!referral.toHospital || String(referral.toHospital) !== String(hospitalId)) {
+      return res.status(403).json({ message: 'Only the receiving hospital can process this referral' });
+    }
 
     if (!['accept','reject','pass'].includes(action)) return res.status(400).json({ message: 'Invalid action' });
 
@@ -35,6 +54,22 @@ export const hospitalAction = async (req, res) => {
     referral.status = status;
     referral.hospitalResponse = { message, action, by: hospitalId, updatedAt: new Date() };
     await referral.save();
+
+    if (action === 'accept') {
+      await Patient.findByIdAndUpdate(referral.patient, {
+        hospital: hospitalId,
+        status: 'Admitted',
+        admissionDate: new Date(),
+        referredTo: null,
+        referredAt: null,
+      });
+    } else if (action === 'reject') {
+      await Patient.findByIdAndUpdate(referral.patient, {
+        status: 'Admitted',
+        referredTo: null,
+        referredAt: null,
+      });
+    }
 
     // optionally update hospital availability when accepted
     if (status === 'accepted') {
@@ -62,6 +97,9 @@ export const getReferralsForHospital = async (req, res) => {
 export const getReferralsForPatient = async (req, res) => {
   try {
     const patientId = req.params.id;
+    if (!req.user || req.user.role !== 'patient' || req.user.id !== patientId) {
+      return res.status(403).json({ message: 'Patient referral access denied' });
+    }
     const referrals = await Referral.find({ patient: patientId }).populate('patient fromDoctor fromHospital toDoctor toHospital').sort({ createdAt: -1 });
     res.json(referrals);
   } catch (err) {

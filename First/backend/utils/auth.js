@@ -32,6 +32,7 @@ export const authHospitalMiddleware = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     if (!decoded || !decoded.id) return res.status(401).json({ message: 'Invalid token' });
 
+    if (decoded.role && decoded.role !== 'hospital') return res.status(403).json({ message: 'Hospital admin access required' });
     const hosp = await Hospital.findById(decoded.id);
     if (!hosp) return res.status(401).json({ message: 'Hospital not found' });
 
@@ -40,6 +41,26 @@ export const authHospitalMiddleware = async (req, res, next) => {
     next();
   } catch (err) {
     console.error('auth error', err);
+    return res.status(401).json({ message: 'Authentication failed' });
+  }
+};
+
+export const authDoctorMiddleware = async (req, res, next) => {
+  try {
+    const auth = req.headers.authorization || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!decoded?.id || decoded.role !== 'doctor') return res.status(403).json({ message: 'Doctor access required' });
+    const doctor = await Doctor.findById(decoded.id);
+    if (!doctor || !doctor.active) return res.status(401).json({ message: 'Doctor not found or inactive' });
+    req.user = { id: doctor._id.toString(), role: 'doctor' };
+    req.doctorId = doctor._id;
+    req.doctor = doctor;
+    req.hospitalId = doctor.hospital;
+    next();
+  } catch (err) {
+    console.error('doctor auth error', err);
     return res.status(401).json({ message: 'Authentication failed' });
   }
 };

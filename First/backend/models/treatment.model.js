@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const treatmentSchema = new mongoose.Schema({
   appointment: {
@@ -8,6 +8,15 @@ const treatmentSchema = new mongoose.Schema({
   description: String,
   diagnosis: String,
   followUpDate: Date,
-});
+  status: {
+    type: String,
+    enum: ['In Progress', 'Completed'],
+    default: 'In Progress',
+  },
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+  },
+}, { timestamps: true });
 
-module.exports = mongoose.model('Treatment', treatmentSchema);
+export default mongoose.model('Treatment', treatmentSchema);
