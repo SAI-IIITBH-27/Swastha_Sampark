@@ -259,6 +259,9 @@ That boundary is deliberate: the platform keeps the implemented workflow underst
 
 ---
 
+## Test Changes
+This section is for testing changes to the README.md file.
+
 ## Contributing
 
 1. Create a focused branch.
@@ -273,7 +276,7 @@ For healthcare-related changes, include the affected role, authorization boundar
 
 ## License
 
-No license has been declared yet. Add a license before redistributing or using this project as a public dependency.
+No license has been declared yet. Add a license before redistributing or using this project as a public dependency. 
 
 ---
 
