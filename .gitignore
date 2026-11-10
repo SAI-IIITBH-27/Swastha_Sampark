@@ -13,6 +13,13 @@ First/my-app/build/
 First/my-app/dist/
 First/my-app/.cache/
 
+# AI Bot ignores
+First/ai-bot/venv/
+First/ai-bot/.env
+First/ai-bot/__pycache__/
+First/ai-bot/*.pyc
+First/ai-bot/.pytest_cache/
+
 # System files
 .DS_Store
 Thumbs.db

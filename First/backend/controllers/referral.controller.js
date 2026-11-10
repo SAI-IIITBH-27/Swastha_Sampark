@@ -142,4 +142,17 @@ export const getReferralStats = async (req, res) => {
   }
 };
 
-export default { createReferral, hospitalAction, getReferralsForHospital };
+export const getReferredPatientsForDoctor = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const referrals = await Referral.find({ toDoctor: doctorId, status: 'accepted' })
+      .populate('patient', 'name age gender medicalHistory')
+      .sort({ createdAt: -1 });
+    res.json(referrals);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export default { createReferral, hospitalAction, getReferralsForHospital, getReferredPatientsForDoctor };

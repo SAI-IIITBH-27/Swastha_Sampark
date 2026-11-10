@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { get, post, patch } from '../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 const emptyAppointment = { patientId: '', date: '', time: '', notes: '' };
 const emptyTreatment = { appointmentId: '', diagnosis: '', description: '', followUpDate: '' };
@@ -15,10 +18,15 @@ const DoctorDashboard = () => {
   const [prescription, setPrescription] = useState(emptyPrescription);
   const [saving, setSaving] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [showMedicalHistory, setShowMedicalHistory] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
 
   const loadWorkspace = async () => {
     try {
-      setWorkspace(await get('/api/doctors/workspace'));
+      const data = await get('/api/doctors/workspace');
+      setWorkspace(data);
       setError('');
     } catch (err) {
       setError(err.message);
@@ -31,6 +39,7 @@ const DoctorDashboard = () => {
   const appointments = useMemo(() => workspace?.appointments || [], [workspace]);
   const patients = useMemo(() => workspace?.patients || [], [workspace]);
   const activeAppointments = useMemo(() => appointments.filter((item) => item.status === 'Scheduled'), [appointments]);
+  const referredPatients = useMemo(() => workspace?.referredPatients || [], [workspace]);
 
   const submit = async (event, endpoint, body, reset) => {
     event.preventDefault();
@@ -63,6 +72,29 @@ const DoctorDashboard = () => {
       await loadWorkspace();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handleAIHelp = async () => {
+    if (!selectedPatient) return;
+    setAiLoading(true);
+    setAiResponse('');
+    try {
+      const response = await fetch('http://localhost:8001/generate-medicines', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: selectedPatient.name,
+          medical_history: selectedPatient.medicalHistory || []
+        })
+      });
+      const data = await response.json();
+      setAiResponse(data.suggested_medicines || 'No response from AI');
+    } catch (err) {
+      setError('Failed to get AI response');
+      setAiResponse('Error: ' + err.message);
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -134,6 +166,74 @@ const DoctorDashboard = () => {
             <button disabled={saving} className="w-full bg-purple-600 text-white rounded-xl py-2.5">Save prescription</button>
           </form>
         </div>
+        <section className="bg-white rounded-2xl shadow-sm border p-6 mt-6">
+          <h3 className="text-xl font-bold text-slate-800 mb-4">Referred Patients</h3>
+          <div className="space-y-3">
+            {referredPatients.map((patient) => (
+              <div key={patient._id} className="border rounded-xl p-4 flex justify-between items-center gap-3">
+                <div>
+                  <p className="font-semibold">{patient.name || 'Patient'}</p>
+                  <p className="text-sm text-slate-500">{patient.age || 'Age not set'} / {patient.gender || 'Gender not set'}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedPatient(patient);
+                    setShowMedicalHistory(true);
+                    setAiResponse('');
+                  }}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm"
+                >
+                  View Details
+                </button>
+              </div>
+            ))}
+            {!referredPatients.length && <p className="text-slate-400">No referred patients yet.</p>}
+          </div>
+        </section>
+        {showMedicalHistory && selectedPatient && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-lg p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-slate-800">Patient History</h3>
+                <button onClick={() => setShowMedicalHistory(false)} className="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+              </div>
+              <div className="space-y-3 mb-4">
+                <p><span className="font-semibold">Name:</span> {selectedPatient.name}</p>
+                <p><span className="font-semibold">Age:</span> {selectedPatient.age || 'Not set'}</p>
+                <p><span className="font-semibold">Gender:</span> {selectedPatient.gender || 'Not set'}</p>
+                <div>
+                  <p className="font-semibold mb-2">Medical History:</p>
+                  {selectedPatient.medicalHistory?.length ? (
+                    <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+                      {selectedPatient.medicalHistory.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-slate-400">No medical history recorded.</p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={handleAIHelp}
+                disabled={aiLoading}
+                className="w-full bg-emerald-600 text-white rounded-xl py-2.5 disabled:bg-slate-400"
+              >
+                {aiLoading ? 'Getting AI Help...' : 'AI Help'}
+              </button>
+              {aiResponse && (
+                <div className="mt-4 p-4 bg-slate-50 rounded-xl border">
+                  <p className="font-semibold text-sm mb-2">AI Response:</p>
+                  <div className="text-sm text-slate-700">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                      {aiResponse}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {error && <p className="mt-4 text-rose-600">{error}</p>}
       </div>
     </div>

@@ -98,8 +98,9 @@ The interface is intentionally operational: clear status badges, compact patient
 
 ### Technology
 
-- **Frontend:** React 19, Vite, React Router, Tailwind CSS, Recharts, Chart.js, Leaflet
+- **Frontend:** React 19, Vite, React Router, Tailwind CSS, Recharts, Chart.js, Leaflet, react-markdown
 - **Backend:** Node.js, Express 5, Mongoose
+- **AI Bot:** FastAPI, Groq LLM
 - **Database:** MongoDB
 - **Authentication:** JWT bearer tokens with bcrypt password hashing
 - **Authorization:** Patient, doctor, and hospital-admin role checks with hospital ownership enforcement
@@ -124,6 +125,12 @@ The interface is intentionally operational: clear status badges, compact patient
 │       │   ├── services/    # Central API client
 │       │   └── routes/       # Frontend route map
 │       └── package.json
+│   └── ai-bot/
+│       ├── llm/             # LLM model configuration
+│       ├── routes/          # API endpoints
+│       ├── schemas/         # Pydantic schemas
+│       ├── main.py          # FastAPI entry point
+│       └── requirements.txt  # Python dependencies
 └── README.md
 ```
 
@@ -135,6 +142,7 @@ The interface is intentionally operational: clear status badges, compact patient
 
 - Node.js 18+
 - npm
+- Python 3.8+ (for AI bot)
 - MongoDB locally or a MongoDB Atlas connection string
 
 ### 1. Start the API
@@ -162,6 +170,7 @@ In another terminal:
 ```bash
 cd First/my-app
 npm install
+npm install react-markdown remark-gfm rehype-raw
 npm run dev
 ```
 
@@ -191,6 +200,46 @@ npm run start:api
 ```
 
 This serves `src/assets/db.json` on port `3001`. It is separate from the MongoDB-backed application API.
+
+### 3. Start the AI Bot
+
+The AI bot provides medical recommendations using Groq's LLM. It runs on port 8001 to avoid conflicts with the backend.
+
+#### Create a virtual environment:
+
+```bash
+cd First/ai-bot
+python -m venv venv
+
+# On Windows:
+venv\Scripts\activate
+
+# On macOS/Linux:
+source venv/bin/activate
+```
+
+#### Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Configure environment variables:
+
+Copy `.env.example` to `.env` and add your Groq API key:
+
+```bash
+cp .env.example .env
+# Edit .env and add: GROQ_API_KEY=your_api_key_here
+```
+
+#### Start the AI bot:
+
+```bash
+python main.py
+```
+
+The AI bot will be available at `http://localhost:8001`.
 
 ---
 

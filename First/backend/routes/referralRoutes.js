@@ -1,5 +1,5 @@
 import express from 'express';
-import { createReferral, hospitalAction, getReferralsForHospital, getReferralStats, getReferralsForPatient, getReferralsForDoctor } from '../controllers/referral.controller.js';
+import { createReferral, hospitalAction, getReferralsForHospital, getReferralStats, getReferralsForPatient, getReferralsForDoctor, getReferredPatientsForDoctor } from '../controllers/referral.controller.js';
 import { authHospitalMiddleware, authMiddleware } from '../utils/auth.js';
 
 const router = express.Router();
@@ -22,5 +22,8 @@ router.get('/patient/:id', authMiddleware, getReferralsForPatient);
 
 // referrals for a doctor
 router.get('/doctor/:id', getReferralsForDoctor);
+
+// referred patients for a doctor (accepted referrals)
+router.get('/doctor/:id/referred-patients', getReferredPatientsForDoctor);
 
 export default router;

@@ -6,6 +6,7 @@ import Patient from '../models/patient.model.js';
 import Appointment from '../models/appointment.model.js';
 import Treatment from '../models/treatment.model.js';
 import Prescription from '../models/prescription.model.js';
+import Referral from '../models/referral.model.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
 
@@ -110,12 +111,13 @@ const doctorScopedAppointment = (doctorId, id) => ({ _id: id, doctor: doctorId }
 export const getDoctorWorkspace = async (req, res) => {
   try {
     const doctorId = req.doctorId;
-    const [doctor, patients, appointments, treatments, prescriptions] = await Promise.all([
+    const [doctor, patients, appointments, treatments, prescriptions, referredPatients] = await Promise.all([
       Doctor.findById(doctorId).select('-password').populate('hospital', 'name location'),
-      Patient.find({ assignedDoctor: doctorId, hospital: req.hospitalId }).select('-password -mustChangePassword').sort({ updatedAt: -1 }),
+      Patient.find({ assignedDoctor: doctorId }).select('-password -mustChangePassword').sort({ updatedAt: -1 }),
       Appointment.find({ doctor: doctorId, hospital: req.hospitalId }).populate('patient', 'name age gender status').sort({ date: 1, time: 1 }),
       Treatment.find({ doctor: doctorId }).populate({ path: 'appointment', populate: { path: 'patient', select: 'name age gender status' } }).sort({ createdAt: -1 }),
       Prescription.find({ doctor: doctorId }).populate({ path: 'appointment', populate: { path: 'patient', select: 'name' } }).sort({ createdAt: -1 }),
+      Patient.find({ assignedDoctor: doctorId }).select('-password -mustChangePassword').sort({ updatedAt: -1 }),
     ]);
     const today = new Date();
     const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -132,6 +134,7 @@ export const getDoctorWorkspace = async (req, res) => {
       appointments,
       treatments,
       prescriptions,
+      referredPatients,
       statistics: {
         totalPatients: patients.length,
         activeCases: patients.filter((patient) => ['Admitted', 'Under Treatment', 'Under Observation'].includes(patient.status)).length,
